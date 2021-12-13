@@ -8,6 +8,7 @@
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
+//https://leetcode.com/problems/merge-k-sorted-lists/
 struct cmp
 {
     bool operator()(ListNode* x1 , ListNode* x2)
