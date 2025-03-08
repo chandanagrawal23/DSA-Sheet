@@ -31,6 +31,6 @@ public:
             crhead->next = temp;
             crhead = crhead->next;
         }
-        return dummy->next;
+        return dummy->next
     }
 };
