@@ -53,4 +53,39 @@ public:
             prev->right = node;
         return root;
     }
+
+/*
+other clear recursion
+
+TreeNode* insertIntoBST(TreeNode* root, int val) {
+    // Base case: If the current node is null, insert the new value here
+    if (root == nullptr) {
+        return new TreeNode(val);
+    }
+
+    // If value is less than current node's value, insert into left subtree
+    if (val < root->val) {
+        // If left child is null, insert directly
+        if (root->left == nullptr) {
+            root->left = new TreeNode(val);
+        } else {
+            // Else, continue recursion into left subtree
+            insertIntoBST(root->left, val);
+        }
+    }
+    // If value is greater or equal, insert into right subtree
+    else {
+        // If right child is null, insert directly
+        if (root->right == nullptr) {
+            root->right = new TreeNode(val);
+        } else {
+            // Else, continue recursion into right subtree
+            insertIntoBST(root->right, val);
+        }
+    }
+
+    // Return the unchanged root node
+    return root;
+}
+*/
 };
