@@ -38,3 +38,23 @@ public:
         return true;
     }
 };
+
+/*
+
+class Solution {
+public:
+
+    // Function to check if two binary trees are the same
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        // If both nodes are null, trees are identical at this position
+        if (!p && !q)
+            return true;
+        // If one of the nodes is null, trees are different
+        if (!p || !q)
+            return false;
+        // Check current node values and recursively check left and right subtrees
+        return p->val == q->val && isSameTree(p->left, q->left) && isSameTree(p->right, q->right);
+    }
+};
+
+*/
