@@ -1,50 +1,141 @@
-//https://leetcode.com/problems/buildings-with-an-ocean-view/
-class Solution {
-public:
-    vector<int> findBuildings(vector<int>& a) {
-        int n = a.size();
-        stack<int  >st;
-        vector<int >ans;
+// Approach 1: Linear Iteration
 
-        for(int i=n-1;i>=0;i--)
+class Solution
+{
+public:
+    vector<int> findBuildings(vector<int>& heights)
+    {
+        int n = heights.size();
+        vector<int> answer;
+        
+        for (int current = 0; current < n; ++current)
         {
-            while(!st.empty() and a[i]>st.top())
+            // If the current building is taller, 
+            // it will block the shorter building's ocean view to its left.
+            // So we pop all the shorter buildings that have been added before.
+            while (!answer.empty() && heights[answer.back()] <= heights[current])
             {
-                st.pop();
+                answer.pop_back();
             }
-            if(st.empty())
-                ans.push_back(i);
-            st.push(a[i]);
+            answer.push_back(current);
         }
-        reverse(ans.begin(),ans.end());
-        return ans;
+        
+        return answer;
     }
 };
 
+// Short approach:
+// Traverse left to right and maintain increasing heights.
+// Pop shorter/equal buildings from answer when current building taller.
+// Time: O(n), Space: O(n)
 
-/*
+// -------------------------------------------------------------
 
-class Solution {
-    public int[] findBuildings(int[] heights) {
-        int length = heights.length;
-        boolean[] oceanView = new boolean[length];
-        int count = 0;
-        int maxHeight = 0;
-        for (int i = length - 1; i >= 0; i--) {
-            if (heights[i] > maxHeight) {
-                oceanView[i] = true;
-                count++;
+// Approach 2: Monotonic Stack
+
+class Solution
+{
+public:
+    vector<int> findBuildings(vector<int>& heights)
+    {
+        int n = heights.size();
+        vector<int> answer;
+        stack<int> st;
+        
+        for (int current = n - 1; current >= 0; --current)
+        {
+            // If the building to the right is smaller, pop it.
+            while (!st.empty() && heights[st.top()] < heights[current])
+            {
+                st.pop();
             }
-            maxHeight = Math.max(maxHeight, heights[i]);
+            
+            // If stack empty, no building to the right blocking view.
+            if (st.size() == 0)
+            {
+                answer.push_back(current);
+            }
+            
+            // Push current building index.
+            st.push(current);
         }
-        int[] buildings = new int[count];
-        int index = 0;
-        for (int i = 0; i < length; i++) {
-            if (oceanView[i])
-                buildings[index++] = i;
-        }
-        return buildings;
+        
+        reverse(answer.begin(), answer.end());
+        return answer;
     }
-}
+};
 
-*/
+// Short approach:
+// Traverse right to left using stack to track taller buildings to the right.
+// Push building if no taller building to right exists.
+// Time: O(n), Space: O(n)
+
+// -------------------------------------------------------------
+
+// Approach 3: Monotonic Stack Space Optimization
+
+class Solution
+{
+public:
+    vector<int> findBuildings(vector<int>& heights)
+    {
+        int n = heights.size();
+        vector<int> answer;
+        int maxHeight = -1;
+        
+        for (int current = n - 1; current >= 0; --current)
+        {
+            // Push building if taller than any building to its right.
+            if (maxHeight < heights[current])
+            {
+                answer.push_back(current);
+                maxHeight = heights[current];
+            }
+        }
+        
+        reverse(answer.begin(), answer.end());
+        return answer;
+    }
+};
+
+// Short approach:
+// Traverse right to left, track max height seen.
+// Add building if taller than max height so far.
+// Time: O(n), Space: O(n)
+
+
+
+// Approach 4 : Just like we use monotonic stack in Next greater element from left to right we can do same here - 
+
+class Solution 
+{
+public:
+    vector<int> findBuildings(vector<int>& heights) 
+    {
+        int n = heights.size();
+        vector<int> nge(n, -1);   // store index of next greater to right
+        stack<int> st;            // will store indices
+        
+        for (int i = 0; i < n; ++i) 
+        {
+            // Pop all smaller or equal buildings
+            while (!st.empty() && heights[st.top()] <= heights[i]) 
+            {
+                nge[st.top()] = i;  // i is next greater for st.top()
+                st.pop();
+            }
+            st.push(i);
+        }
+        
+        vector<int> answer;
+        // Buildings without any taller building to right (NGE == -1)
+        for (int i = 0; i < n; ++i) 
+        {
+            if (nge[i] == -1) 
+                answer.push_back(i);
+        }
+        
+        return answer;
+    }
+};
+
