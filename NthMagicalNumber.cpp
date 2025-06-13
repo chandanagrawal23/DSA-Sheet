@@ -14,7 +14,7 @@ public:
         long long lcm = (1LL * a / gcd(a, b)) * b;
 
         long long left = 1, right = 1e18;
-        int ans = -1;
+        long long ans = -1;
 
         while (left <= right)
         {
