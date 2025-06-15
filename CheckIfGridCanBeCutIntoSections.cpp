@@ -81,7 +81,7 @@ public:
 };
 
 /*
-🔍 Approach Summary:
+Approach Summary:
 
 1. For each rectangle, extract its horizontal (x1 to x2) and vertical (y1 to y2) coverage.
 2. For X-axis:
@@ -91,9 +91,9 @@ public:
 3. Same logic for Y-axis to find a valid horizontal line.
 4. Return true if either vertical or horizontal line exists that intersects at most one rectangle.
 
-🕒 Time Complexity: O(n log n)
+Time Complexity: O(n log n)
     - Due to sorting x and y intervals.
 
-💾 Space Complexity: O(n)
+Space Complexity: O(n)
     - For storing x and y projections of rectangles.
 */
