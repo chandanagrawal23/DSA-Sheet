@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 class Solution {
 public:
     long long maximumProduct(vector<int>& nums, int m) {
@@ -35,6 +32,15 @@ public:
 - For each position i, fix nums[i] as one element of the product.
 - Find the maximum and minimum in the suffix starting from index (i + m - 1).
 - Calculate both products and take the maximum across all valid positions.
+
+
+In a subsequence of size m, we only care about the first and last elements. The middle m - 2 elements can be any elements between them (as long as the order is preserved).
+
+So for any pair (i, j) such that j - i + 1 ≥ m, we can pick:
+
+nums[i] as the first
+nums[j] as the last
+And that forms a valid subsequence of length m.
 - Precompute suffix max/min arrays for O(1) access and avoid TLE.
 - Time complexity: O(n)
 */
