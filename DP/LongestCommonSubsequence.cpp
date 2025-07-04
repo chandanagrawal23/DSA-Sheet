@@ -46,3 +46,30 @@ Approach:
 Time Complexity:  O(n * m)
 Space Complexity: O(n * m)
 */
+
+/*
+// Reconstruct the LCS from the DP table
+string lcs = "";
+int i = n, j = m;
+
+while (i > 0 && j > 0) 
+{
+    if (a[i - 1] == b[j - 1]) 
+    {
+        lcs += a[i - 1];
+        i--; j--;
+    } 
+    else if (dp[i - 1][j] > dp[i][j - 1]) 
+    {
+        i--;
+    } 
+    else 
+    {
+        j--;
+    }
+}
+
+reverse(lcs.begin(), lcs.end());  // Reversed during backtracking
+return lcs;
+
+*/
