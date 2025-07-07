@@ -36,7 +36,7 @@ private:
         int take = 0;
 
         // If we can take the current string
-        if (m >= count0 && n >= count1)
+        if (count0 <= m && count1 <= n)
         {
             take = 1 + recur(strs, i + 1, m - count0, n - count1, dp);
         }
