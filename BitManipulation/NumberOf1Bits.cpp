@@ -1,7 +1,7 @@
 // Approach 1: Basic Bit Traversal using Right Shift
 // Time: O(32), Space: O(1)
 
-class Solution1 
+class Solution 
 {
 public:
     int hammingWeight(uint32_t n) 
@@ -16,12 +16,12 @@ public:
     }
 };
 
-// ====================================================
+// ========================================================================================================================================
 
 // Approach 2: Brian Kernighan’s Algorithm
 // Time: O(k), where k = number of set bits, Space: O(1)
 
-class Solution2 
+class Solution
 {
 public:
     int hammingWeight(uint32_t n) 
@@ -36,12 +36,12 @@ public:
     }
 };
 
-// ====================================================
+// ========================================================================================================================================
 
 // Approach 3: Using __builtin_popcount (GCC/Clang)
 // Time: O(1), Space: O(1)
 
-class Solution3 
+class Solution
 {
 public:
     int hammingWeight(uint32_t n) 
@@ -50,14 +50,14 @@ public:
     }
 };
 
-// ====================================================
+// ========================================================================================================================================
 
 // Approach 4: Using bitset STL
 // Time: O(1), Space: O(1)
 
 #include <bitset>
 
-class Solution4 
+class Solution
 {
 public:
     int hammingWeight(uint32_t n) 
