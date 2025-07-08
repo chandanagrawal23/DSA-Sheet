@@ -89,7 +89,6 @@ public:
 
         for (auto& q : queries) {
             int cx = q[0], cy = q[1], r = q[2];
-            int r2 = r * r;
 
             // Get x-range [startIndex, endIndex] using binary search
             int start = lowerBoundX(points, cx - r); // Binary search for first point with x >= (cx - r)
@@ -101,7 +100,7 @@ public:
                 int dx = points[i][0] - cx;
                 int dy = points[i][1] - cy;
                  // if distance of point from circle centre is less than equal r , means inside  circle
-                if (dx * dx + dy * dy <= r2)
+                if (dx * dx + dy * dy <= r*r)
                     count++;
             }
 
