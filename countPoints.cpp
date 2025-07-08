@@ -72,3 +72,98 @@ Approach:
 6. The final result is a vector where each entry represents the count of points inside
    the respective circle from the queries list.
 */
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Approach 2 , more optimised better than above, instead of iterating to each point , 
+//              we will find first point which "MAY" lie inside the current circle,
+//              same will find last point which "MAY" lie inside circle
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> countPoints(vector<vector<int>>& points, vector<vector<int>>& queries) {
+        sort(points.begin(), points.end());
+        vector<int> ans;
+
+        for (auto& q : queries) {
+            int cx = q[0], cy = q[1], r = q[2];
+            int r2 = r * r;
+
+            // Get x-range [startIndex, endIndex] using binary search
+            int start = lowerBoundX(points, cx - r); // Binary search for first point with x >= (cx - r)
+            int end   = upperBoundX(points, cx + r); // Binary search for last point with x <= (cx + r)
+
+            int count = 0;
+            for (int i = start; i <= end; ++i) 
+            {
+                int dx = points[i][0] - cx;
+                int dy = points[i][1] - cy;
+                 // if distance of point from circle centre is less than equal r , means inside  circle
+                if (dx * dx + dy * dy <= r2)
+                    count++;
+            }
+
+            ans.push_back(count);
+        }
+
+        return ans;
+    }
+
+private:
+    // Find first index where x >= target
+    int lowerBoundX(const vector<vector<int>>& points, int target) {
+        int l = 0, h = points.size() - 1, ans = points.size();
+        while (l <= h) {
+            int mid = (l + h) / 2;
+            if (points[mid][0] >= target) {
+                ans = mid;
+                h = mid - 1;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return ans;
+    }
+
+    // Find last index where x <= target
+    int upperBoundX(const vector<vector<int>>& points, int target) {
+        int l = 0, h = points.size() - 1, ans = -1;
+        while (l <= h) {
+            int mid = (l + h) / 2;
+            if (points[mid][0] <= target) {
+                ans = mid;
+                l = mid + 1;
+            } else {
+                h = mid - 1;
+            }
+        }
+        return ans;
+    }
+};
+/*
+Approach:
+---------
+- Sort the points based on x-coordinate.
+- For each query (circle center cx, cy and radius r):
+   1. Only consider points whose x is in [cx - r, cx + r] (because if x is outside this range, point can’t be inside circle).
+   2. Use binary search to find that valid range.
+   3. For those points, check full (x, y) Euclidean distance using (dx² + dy²) ≤ r².
+
+Time Complexity:
+----------------
+- Sorting points: O(n log n)
+- For each query:
+   - Binary search: O(log n)
+   - Loop over filtered points (say k): O(k)
+- So total is O(n log n + q × log n + total_filtered_points)
+
+Why better than brute-force:
+----------------------------
+- Brute-force does O(n * q)
+- This filters only relevant x-range points per query using binary search.
+*/
+
+
+// there is one more K-D tree approach which is out of scope for this 
