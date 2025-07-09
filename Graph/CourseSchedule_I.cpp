@@ -12,7 +12,7 @@ public:
             int course = pre[0];
             int prerequisite = pre[1];
 
-            graph[prerequisite].push_back(course);
+            graph[prerequisite].push_back(course);  //prerequisite - > course
             inDegree[course]++;
         }
 
