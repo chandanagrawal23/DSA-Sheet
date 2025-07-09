@@ -48,6 +48,9 @@ Approach:
 - Use a hashable encoding (x * 2^10 + y) to store and lookup 2D points efficiently.
 - For each valid rectangle, calculate the area and track the minimum.
 
+Means I took 2 points (X1,Y1) and (X2, Y2) as two diagonal point , now I want 
+to find other two - (X1,Y2) and (X2,Y1) for rectangle 
+
 Time: O(n^2) for all pairs.
 Space: O(n) for storing encoded points.
 */
