@@ -74,12 +74,20 @@ public:
 
 /*
 
-Given graph is from u to v
+/*
+Given graph edges are from u → v.
 
-now question says we should reach node 0 from every node, so instead of that
-by reversing the edges we can say, we should reach to any node from node 0
+But the question asks if all nodes can reach node 0. To simplify,
+we reverse the edges so it becomes: can node 0 reach all other nodes?
 
-Now we apply binary search over answer , let say my MID is answer, so for MID i want to check whether I 
-can reach to all nodes from 0 or not.
+Now apply binary search on the edge weight.
+For each mid value, check if we can reach all nodes from node 0
+using only edges with weight ≤ mid.
 
+Time Complexity:
+- O(E * logW), where W is the range of weights (max - min),
+  and E is the number of edges processed during BFS in each iteration.
+
+Space Complexity:
+- O(N + E) for adjacency list and visited array.
 */
