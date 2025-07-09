@@ -40,9 +40,9 @@ public:
                         cost[newRow][newCol] = newCost;
 
                         if (grid[newRow][newCol] == 1) 
-                            dq.push_back({newRow, newCol});  // Unsafe move (cost 1)
+                            dq.push_back({newRow, newCol});  // Unsafe move (cost 1), push in the end(back)
                         else 
-                            dq.push_front({newRow, newCol}); // Safe move (cost 0)
+                            dq.push_front({newRow, newCol}); // Safe move (cost 0), push in front
                     }
                 }
             }
