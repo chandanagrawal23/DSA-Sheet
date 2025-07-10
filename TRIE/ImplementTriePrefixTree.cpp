@@ -16,10 +16,10 @@ public:
 
 class Trie
 {
-private:
+public:
+
     TrieNode* root;
 
-public:
     Trie()
     {
         root = new TrieNode();
