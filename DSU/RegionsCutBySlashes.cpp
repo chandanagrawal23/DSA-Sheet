@@ -174,7 +174,7 @@ public:
                     visited[baseRow + 1][baseCol + 1] = true;
                     visited[baseRow + 2][baseCol] = true;
                 }
-                else if (ch == '\')
+                else if (ch == '\\')
                 {
                     visited[baseRow][baseCol] = true;
                     visited[baseRow + 1][baseCol + 1] = true;
