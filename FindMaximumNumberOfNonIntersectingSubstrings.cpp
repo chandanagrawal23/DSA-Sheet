@@ -57,7 +57,7 @@ Space Complexity: O(26) — constant space to track first occurrences of charact
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// there will be a high possibility u think like merge interval, now worries below code helps you 
+// there will be a high possibility u think like merge interval, no worries below code helps you 
 class Solution {
 public:
     // Custom lower_bound to find the first index where arr[i] >= val
