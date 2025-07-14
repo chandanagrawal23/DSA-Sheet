@@ -3,51 +3,55 @@ class Solution
 public:
     string toHex(int num) 
     {
-        // Convert signed int to unsigned to handle negatives properly
-        unsigned int value = num;
-
-        // Array of hexadecimal characters
-        char hexChars[17] = "0123456789abcdef";
-
-        string hexStr;
-
-        // Convert value to hex (base 16)
-        do 
+        if (num == 0)
         {
-            int remainder = value % 16;
-            hexStr += hexChars[remainder]; // Append corresponding hex character
-            value /= 16;
-        } 
-        while (value);
+            return "0";
+        }
 
-        // Reverse to get correct order
-        return {hexStr.rbegin(), hexStr.rend()};
+        string hexMap = "0123456789abcdef";
+        unsigned int val = num;
+
+        // Handle negative numbers by converting to unsigned 32-bit equivalent
+        if (num < 0)
+        {
+            val = static_cast<unsigned int>(num) + (1LL << 32);
+        }
+
+        string result;
+        while (val > 0)
+        {
+            int rem = val % 16;
+            result = hexMap[rem] + result;
+            val /= 16;
+        }
+
+        return result;
     }
 };
+
 /*
 Problem:
 --------
-Convert a 32-bit signed integer into a hexadecimal string (lowercase, no leading "0x").
+Convert an integer to a hexadecimal string.
 
-Key Insight:
-------------
-- Negative numbers are converted to their 2's complement form if cast to unsigned.
-  Ex: -1 becomes 0xFFFFFFFF (which is 2^32 - 1)
+Logic:
+------
+- If the number is zero, return "0".
+- If the number is negative, convert it to its 32-bit unsigned equivalent:
+     num + 2^32 (same as unsigned int behavior).
+- Repeatedly divide by 16 and prepend the corresponding hex digit.
 
-Approach:
----------
-1. Convert the signed `int` to `unsigned int` to correctly handle negative values.
-2. Repeatedly divide the number by 16 (hex base), and collect the remainder.
-3. Use `hexChars[remainder]` to get the corresponding hexadecimal digit.
-4. Append characters in reverse order, so we reverse the final string.
+Hex Digits:
+-----------
+Use the string "0123456789abcdef" to get the digit for each remainder.
 
 Example:
 --------
 Input: -1
-Unsigned value: 4294967295 (2^32 - 1)
-Hex: "ffffffff"
+Unsigned version: 4294967295 (2^32 - 1)
+Output: "ffffffff"
 
-Time Complexity: O(1) — Max of 8 digits in 32-bit hex
-Space Complexity: O(1) — Uses fixed space
+Time Complexity: log16(N) ~ O(1) — At most 8 hex digits (32 bits)
+Space Complexity: O(1)
 
 */
