@@ -28,11 +28,11 @@ public:
             {
                 int sum = a[i] + a[start] + a[end];
 
-                if (sum < 0)
+                if (sum < 0)  // if we want sum = target , then it wil be if(sum<target)
                 {
                     start++;
                 }
-                else if (sum > 0)
+                else if (sum > 0) // if we want sum = target , then it wil be if(sum>target)
                 {
                     end--;
                 }
