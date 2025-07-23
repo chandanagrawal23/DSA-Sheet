@@ -73,6 +73,8 @@ So, we use the same idea to find the specific area's sum.
 |        (r2,c2)|   |       (r2,c2)|   |   (r2,c1)     |   |              |   |              |
 +---------------+   +--------------+   +---------------+   +--------------+   +--------------+
 
+TOTAL             = sum[r2][c2]     -   sum[r1-1][c2]   - sum[r2][c1-1]     +  sum[r1-1][c1-1]
+
 
 2. Building the Prefix Grid (constructor):
    - For each cell (i, j), total sum includes:
