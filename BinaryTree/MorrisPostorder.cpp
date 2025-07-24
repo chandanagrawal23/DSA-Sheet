@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 class TreeNode
@@ -20,122 +21,104 @@ class Solution
 public:
     vector<int> morrisPostorder(TreeNode *root)
     {
-        vector<int> result;
-        TreeNode dummy(0);
-        dummy.left = root;
-        TreeNode *curr = &dummy;
+        vector<int> res;
+        TreeNode *curr = root;
 
-        while (curr)
+        while (curr != nullptr)
         {
-            if (!curr->left)
+            if (curr->right == nullptr)
             {
-                curr = curr->right;
+                res.push_back(curr->val);
+                curr = curr->left;
             }
             else
             {
-                TreeNode *pred = curr->left;
-                while (pred->right && pred->right != curr)
+                TreeNode *predecessor = curr->right;
+                while (predecessor->left != nullptr && predecessor->left != curr)
                 {
-                    pred = pred->right;
+                    predecessor = predecessor->left;
                 }
 
-                if (!pred->right)
+                if (predecessor->left == nullptr)
                 {
-                    pred->right = curr;
-                    curr = curr->left;
+                    res.push_back(curr->val);
+                    predecessor->left = curr;
+                    curr = curr->right;
                 }
                 else
                 {
-                    collectReverse(curr->left, pred, result);
-                    pred->right = nullptr;
-                    curr = curr->right;
+                    predecessor->left = nullptr;
+                    curr = curr->left;
                 }
             }
         }
 
-        return result;
-    }
-
-    void collectReverse(TreeNode *from, TreeNode *to, vector<int> &res)
-    {
-        reversePath(from, to);
-        TreeNode *node = to;
-        while (true)
-        {
-            res.push_back(node->val);
-            if (node == from)
-                break;
-            node = node->right;
-        }
-        reversePath(to, from);
-    }
-
-    void reversePath(TreeNode *from, TreeNode *to)
-    {
-        if (from == to)
-            return;
-        TreeNode *x = from, *y = from->right, *z;
-        while (x != to)
-        {
-            z = y->right;
-            y->right = x;
-            x = y;
-            y = z;
-        }
+        reverse(res.begin(), res.end());
+        return res;
     }
 };
-
 int main()
 {
     /*
-            4
-           / \
-          2   5
-         / \
-        1   3
+            10
+           /  \
+         20    30
+              /  \
+            40    50
     */
-    TreeNode *root = new TreeNode(4);
-    root->left = new TreeNode(2);
-    root->right = new TreeNode(5);
-    root->left->left = new TreeNode(1);
-    root->left->right = new TreeNode(3);
+
+    TreeNode *root = new TreeNode(10);
+    root->left = new TreeNode(20);
+    root->right = new TreeNode(30);
+    root->right->left = new TreeNode(40);
+    root->right->right = new TreeNode(50);
 
     Solution sol;
-    vector<int> postorder = sol.morrisPostorder(root);
+    vector<int> result = sol.morrisPostorder(root);
 
-    cout << "Morris Postorder: ";
-    for (int val : postorder)
+    cout << "Morris Postorder Traversal: ";
+    for (int val : result)
+    {
         cout << val << " ";
+    }
     cout << endl;
+
+    return 0;
 }
 
 /*
+Approach: Morris Postorder Traversal (GFG Style)
 
-Approach (Morris Postorder):
+Postorder traversal: Left → Right → Node
 
-- Postorder: Left → Right → Node
-- Use a dummy node with left = root.
-- Use threading to connect predecessor’s right to current node.
-- But unlike inorder/preorder, we process nodes AFTER left and right are done.
-- To do this:
-   1. When thread is about to be broken, we reverse right edge of subtree (from current->left to pred).
-   2. Visit nodes in that reversed path.
-   3. Restore tree by reversing again.
+1. We simulate reverse preorder: Root → Right → Left.
+2. We traverse the tree by modifying right subtree pointers to make temporary threads.
+3. During traversal:
+   - If right child is NULL: record the current node, move to left.
+   - Else, find the inorder predecessor (leftmost node in right subtree).
+     - If predecessor->left == NULL:
+        - Create a thread: predecessor->left = current.
+        - Save current->val into result.
+        - Move to right child.
+     - Else:
+        - Thread exists: remove it and move to left child.
 
-Key:
-- Use reversePath() to reverse right edge of a path.
-- Use collectReverse() to add those values.
+4. Finally, reverse the result vector to get correct postorder sequence.
 
-Tree:
-         4
-        / \
-       2   5
-      / \
-     1   3
+Example Tree:
+        10
+       /  \
+     20    30
+          /  \
+        40    50
 
-Reverse visiting path like: 1→2→3 (visit in reverse)
-Final Output: [1 3 2 5 4]
+Threading and traversal flow:
+- Start at 10 → go right to 30 → go right to 50 (add 10, 30, 50 to res)
+- Then rewind back via threads, go left to 40 → finally to 20 (add 40, 20)
+- res before reverse: [10, 30, 50, 40, 20]
+- Final postorder:     [20, 40, 50, 30, 10]
 
-Time: O(n), Space: O(1)
+Time Complexity:  O(n)
+Space Complexity: O(1) auxiliary (only output vector used)
 */
 
