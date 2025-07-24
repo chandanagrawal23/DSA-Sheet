@@ -1,3 +1,4 @@
+// DFS Based Solution
 class Solution
 {
 public:
@@ -95,3 +96,63 @@ Result:
 }
 
 */
+
+////////////////////////////////////////////////////////////////////////////////////////////
+// BFS Based Solution
+
+class Solution
+{
+public:
+    const vector<pair<int, int>> DIR = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}}; // 4 directions
+
+    vector<vector<int>> colorBorder(vector<vector<int>> &grid, int row, int col, int color)
+    {
+        int m = grid.size(), n = grid[0].size();
+        int originalColor = grid[row][col];
+
+        vector<vector<bool>> visited(m, vector<bool>(n, false));
+        vector<pair<int, int>> border;
+
+        queue<pair<int, int>> q;
+        q.push({row, col});
+        visited[row][col] = true;
+
+        while (!q.empty())
+        {
+            auto [i, j] = q.front();
+            q.pop();
+            bool isBorder = false;
+
+            for (auto [dx, dy] : DIR)
+            {
+                int ni = i + dx;
+                int nj = j + dy;
+
+                // If adjacent is out of bounds or different color → this is a border cell
+                if (ni < 0 || nj < 0 || ni >= m || nj >= n || grid[ni][nj] != originalColor)
+                {
+                    isBorder = true;
+                }
+                else if (!visited[ni][nj])
+                {
+                    visited[ni][nj] = true;
+                    q.push({ni, nj});
+                }
+            }
+
+            if (isBorder)
+            {
+                border.push_back({i, j});
+            }
+        }
+
+        // Color only the border cells
+        for (auto &[x, y] : border)
+        {
+            grid[x][y] = color;
+        }
+
+        return grid;
+    }
+};
+
