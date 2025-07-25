@@ -16,7 +16,6 @@ struct TreeNode
         left = right = nullptr;
     }
 
-    // Optional constructor to create node with children
     TreeNode(int x, TreeNode* l, TreeNode* r)
     {
         val = x;
@@ -32,9 +31,10 @@ class Solution
 {
 public:
 
-    // ------------------------------
+    // -----------------------------------------------------
     // 1. RIGHT VIEW USING BFS
-    // ------------------------------
+    // Level-order traversal, pick last node at each level
+    // -----------------------------------------------------
     vector<int> rightViewBFS(TreeNode* root)
     {
         vector<int> result;
@@ -51,8 +51,7 @@ public:
                 TreeNode* node = q.front();
                 q.pop();
 
-                // last node in current level
-                if (i == size - 1)
+                if (i == size - 1) // last node at this level
                     result.push_back(node->val);
 
                 if (node->left) q.push(node->left);
@@ -62,19 +61,18 @@ public:
         return result;
     }
 
-    // ------------------------------
+    // -----------------------------------------------------
     // 2. RIGHT VIEW USING DFS (Recursive)
-    // ------------------------------
+    // Right-first DFS; store first node at each level
+    // -----------------------------------------------------
     void dfs(TreeNode* node, int level, vector<int>& res)
     {
         if (!node) return;
 
-        // if visiting this level for the first time
-        if (level == res.size())
+        if (level == res.size()) // first node at this level
             res.push_back(node->val);
 
-        // right first for right view
-        dfs(node->right, level + 1, res);
+        dfs(node->right, level + 1, res); // right first
         dfs(node->left, level + 1, res);
     }
 
@@ -85,15 +83,16 @@ public:
         return res;
     }
 
-    // ------------------------------
+    // -----------------------------------------------------
     // 3. RIGHT VIEW USING DFS (Iterative)
-    // ------------------------------
+    // Use stack (right-first); record first node per level
+    // -----------------------------------------------------
     vector<int> rightViewDFSIterative(TreeNode* root)
     {
         if (!root) return {};
 
         stack<pair<TreeNode*, int>> st;         // node + level
-        unordered_map<int, int> levelMap;       // level -> first seen node (from right)
+        unordered_map<int, int> levelMap;       // level -> value
         st.push({root, 0});
 
         while (!st.empty())
@@ -101,11 +100,9 @@ public:
             auto [node, level] = st.top();
             st.pop();
 
-            // only first node per level
             if (levelMap.find(level) == levelMap.end())
                 levelMap[level] = node->val;
 
-            // left pushed first so right is processed first
             if (node->left) st.push({node->left, level + 1});
             if (node->right) st.push({node->right, level + 1});
         }
