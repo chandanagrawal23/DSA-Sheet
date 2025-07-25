@@ -20,7 +20,7 @@ class Solution
 {
 public:
     // -----------------------------------------------------
-    // TOP VIEW USING BFS
+    // 1. TOP VIEW USING BFS
     // -----------------------------------------------------
     // Idea:
     // - Perform level order traversal (BFS).
@@ -58,6 +58,41 @@ public:
 
         return result;
     }
+
+    // -----------------------------------------------------
+    // 2. TOP VIEW USING DFS
+    // -----------------------------------------------------
+    // Idea:
+    // - Traverse the tree recursively.
+    // - Keep track of horizontal distance (HD) and level (depth).
+    // - For each HD, store the first node that appears at the smallest depth.
+    // - If another node comes at same HD but deeper level, ignore it.
+    // -----------------------------------------------------
+    void dfs(TreeNode* node, int hd, int level, map<int, pair<int, int>>& hdMap)
+    {
+        if (!node) return;
+
+        // only take the node if no node at this HD or comes from a shallower level
+        if (hdMap.find(hd) == hdMap.end() || level < hdMap[hd].second)
+            hdMap[hd] = {node->val, level};
+
+        dfs(node->left, hd - 1, level + 1, hdMap);
+        dfs(node->right, hd + 1, level + 1, hdMap);
+    }
+
+    vector<int> topViewDFS(TreeNode* root)
+    {
+        vector<int> result;
+        if (!root) return result;
+
+        map<int, pair<int, int>> hdMap;  // HD -> {node_val, level}
+        dfs(root, 0, 0, hdMap);
+
+        for (auto& [hd, val_level] : hdMap)
+            result.push_back(val_level.first);
+
+        return result;
+    }
 };
 
 // -------------------------------
@@ -87,10 +122,15 @@ int main()
     root->right->right->right = new TreeNode(7);
 
     Solution sol;
-    vector<int> top = sol.topView(root);
 
-    cout << "Top View: ";
-    for (int x : top) cout << x << " ";
+    vector<int> topBFS = sol.topView(root);
+    cout << "Top View (BFS): ";
+    for (int x : topBFS) cout << x << " ";
+    cout << endl;
+
+    vector<int> topDFS = sol.topViewDFS(root);
+    cout << "Top View (DFS): ";
+    for (int x : topDFS) cout << x << " ";
     cout << endl;
 
     return 0;
@@ -100,21 +140,30 @@ int main()
 ------------------------------------------------------------
 Approach Summary:
 ------------------------------------------------------------
-- Use BFS traversal to ensure topmost (first seen) nodes at each horizontal distance (HD) are captured.
-- Track HD of each node starting from root (HD = 0), left = -1, right = +1.
-- Use map<int, int> to store first node for each HD during traversal.
-- At the end, extract node values from map in order of increasing HD.
+
+1. **Top View using BFS**:
+   - Use level-order traversal.
+   - Track each node's horizontal distance (HD) from the root.
+   - For each HD, keep the **first** node encountered (topmost at that HD).
+   - Result is collected from leftmost HD to rightmost HD using map.
+
+2. **Top View using DFS**:
+   - Traverse tree recursively (DFS).
+   - For each node, track its HD and depth (level).
+   - Store the node if it's the **first seen** at that HD or at a shallower depth.
+   - Result is collected in order of increasing HD using map.
 
 ------------------------------------------------------------
 Time Complexity: O(N * log N)
 ------------------------------------------------------------
-- Each node is visited once => O(N)
-- Insertion into map takes O(log N) per node (due to red-black tree)
+- Both BFS and DFS visit each node once => O(N)
+- Each insertion in `map` takes O(log N)
 
 ------------------------------------------------------------
 Space Complexity: O(N)
 ------------------------------------------------------------
-- Queue can store up to O(N) nodes in worst case (level with max width)
-- Map stores up to O(N) entries (each HD at most once)
+- BFS queue or DFS recursion stack => O(H) where H is height (≤ N)
+- Map stores up to N nodes in worst case => O(N)
+
 ------------------------------------------------------------
 */
