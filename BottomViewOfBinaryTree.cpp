@@ -19,18 +19,23 @@ struct TreeNode
 class Solution
 {
 public:
-    // ------------------------------
-    // BOTTOM VIEW USING BFS
-    // ------------------------------
+    // -----------------------------------------------------
+    // 1. BOTTOM VIEW USING BFS
+    // -----------------------------------------------------
+    // Idea:
+    // - Perform level order traversal (BFS)
+    // - Track horizontal distance (HD) for each node
+    // - Always update the node at a particular HD (last seen = bottom)
+    // - Use map<int, int> to store HD -> value mapping
+    // - At the end, map will contain the bottom-most node for each HD
+    // -----------------------------------------------------
     vector<int> bottomViewBFS(TreeNode* root)
     {
         vector<int> result;
         if (!root) return result;
 
-        // Queue for BFS: pair of node and horizontal distance
-        queue<pair<TreeNode*, int>> q;
-        // Map to store the last node at each horizontal distance (bottom-most)
-        map<int, int> hdMap;
+        queue<pair<TreeNode*, int>> q;      // {node, HD}
+        map<int, int> hdMap;                // HD -> value
 
         q.push({root, 0});
 
@@ -39,47 +44,47 @@ public:
             auto [node, hd] = q.front();
             q.pop();
 
-            // Insert the current node, this will overwrite the previous one at the same HD
+            // always update, last one seen at HD is bottom-most
             hdMap[hd] = node->val;
 
             if (node->left) q.push({node->left, hd - 1});
             if (node->right) q.push({node->right, hd + 1});
         }
 
-        // Collect results from leftmost to rightmost HD
         for (auto& [hd, val] : hdMap)
             result.push_back(val);
 
         return result;
     }
 
-    // Helper function for DFS traversal
+    // -----------------------------------------------------
+    // 2. BOTTOM VIEW USING DFS
+    // -----------------------------------------------------
+    // Idea:
+    // - Traverse the tree using DFS
+    // - At each node, record its value for current HD
+    // - The last node visited at a given HD will overwrite the previous one
+    // - Thus, the final map will contain the bottom-most node at each HD
+    // -----------------------------------------------------
     void dfs(TreeNode* node, int hd, map<int, int>& hdMap)
     {
         if (!node) return;
 
-        // Update the map with the current node (this will overwrite any existing node at the same horizontal distance)
+        // always update for bottom-most
         hdMap[hd] = node->val;
 
-        // Recursively visit left and right children with updated horizontal distance
         dfs(node->left, hd - 1, hdMap);
         dfs(node->right, hd + 1, hdMap);
     }
 
-    // ------------------------------
-    // BOTTOM VIEW USING DFS
-    // ------------------------------
     vector<int> bottomViewDFS(TreeNode* root)
     {
         vector<int> result;
         if (!root) return result;
 
         map<int, int> hdMap;
-
-        // Start DFS traversal from root at horizontal distance 0
         dfs(root, 0, hdMap);
 
-        // Collect results from leftmost to rightmost HD
         for (auto& [hd, val] : hdMap)
             result.push_back(val);
 
@@ -115,13 +120,11 @@ int main()
 
     Solution sol;
 
-    // Test BFS approach
     vector<int> bottomBFS = sol.bottomViewBFS(root);
     cout << "Bottom View (BFS): ";
     for (int x : bottomBFS) cout << x << " ";
     cout << endl;
 
-    // Test DFS approach
     vector<int> bottomDFS = sol.bottomViewDFS(root);
     cout << "Bottom View (DFS): ";
     for (int x : bottomDFS) cout << x << " ";
@@ -129,3 +132,34 @@ int main()
 
     return 0;
 }
+
+/*
+------------------------------------------------------------
+Approach Summary:
+------------------------------------------------------------
+
+1. **BFS Approach**:
+   - Use a queue for level-order traversal.
+   - Track horizontal distance (HD) of each node.
+   - For each HD, keep updating the value as new nodes are seen at deeper levels.
+   - This way, the last node encountered at a HD will be the bottom-most one.
+
+2. **DFS Approach**:
+   - Traverse recursively (DFS), passing the current HD.
+   - Always overwrite the value at each HD.
+   - Final map will store the bottom-most node for each HD.
+
+------------------------------------------------------------
+Time Complexity: O(N * log N)
+------------------------------------------------------------
+- O(N) for visiting each node
+- O(log N) per insertion/update in `map` (balanced BST)
+
+------------------------------------------------------------
+Space Complexity: O(N)
+------------------------------------------------------------
+- Queue for BFS or recursion stack for DFS
+- Map stores up to N horizontal distances in worst case
+
+------------------------------------------------------------
+*/
