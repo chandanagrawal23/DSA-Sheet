@@ -19,18 +19,25 @@ struct TreeNode
 class Solution
 {
 public:
-    // ------------------------------
+    // -----------------------------------------------------
     // TOP VIEW USING BFS
-    // ------------------------------
+    // -----------------------------------------------------
+    // Idea:
+    // - Perform level order traversal (BFS).
+    // - Keep track of horizontal distance (HD) of each node from root.
+    // - Root has HD = 0, left child = HD - 1, right child = HD + 1.
+    // - For each HD, store the **first node** encountered during BFS
+    //   (this ensures topmost node for that vertical column is stored).
+    // - Use a map<int, int> to store HD -> node value mapping.
+    // - Finally, return node values in order from leftmost HD to rightmost HD.
+    // -----------------------------------------------------
     vector<int> topView(TreeNode* root)
     {
         vector<int> result;
         if (!root) return result;
 
-        // Queue for BFS: pair of node and horizontal distance
-        queue<pair<TreeNode*, int>> q;
-        // Map to store first node at each horizontal distance
-        map<int, int> hdMap;
+        queue<pair<TreeNode*, int>> q;      // {node, HD}
+        map<int, int> hdMap;                // HD -> first seen node
 
         q.push({root, 0});
 
@@ -39,16 +46,14 @@ public:
             auto [node, hd] = q.front();
             q.pop();
 
-            // Insert only if not already present (top-most)
-            if (hdMap.find(hd) == hdMap.end())
+            if (hdMap.find(hd) == hdMap.end())  // topmost at this HD
                 hdMap[hd] = node->val;
 
             if (node->left) q.push({node->left, hd - 1});
             if (node->right) q.push({node->right, hd + 1});
         }
 
-        // Collect results from leftmost to rightmost HD
-        for (auto& [hd, val] : hdMap)
+        for (auto& [hd, val] : hdMap)  // collect in left-to-right order
             result.push_back(val);
 
         return result;
@@ -90,3 +95,26 @@ int main()
 
     return 0;
 }
+
+/*
+------------------------------------------------------------
+Approach Summary:
+------------------------------------------------------------
+- Use BFS traversal to ensure topmost (first seen) nodes at each horizontal distance (HD) are captured.
+- Track HD of each node starting from root (HD = 0), left = -1, right = +1.
+- Use map<int, int> to store first node for each HD during traversal.
+- At the end, extract node values from map in order of increasing HD.
+
+------------------------------------------------------------
+Time Complexity: O(N * log N)
+------------------------------------------------------------
+- Each node is visited once => O(N)
+- Insertion into map takes O(log N) per node (due to red-black tree)
+
+------------------------------------------------------------
+Space Complexity: O(N)
+------------------------------------------------------------
+- Queue can store up to O(N) nodes in worst case (level with max width)
+- Map stores up to O(N) entries (each HD at most once)
+------------------------------------------------------------
+*/
