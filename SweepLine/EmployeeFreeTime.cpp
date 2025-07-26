@@ -44,6 +44,24 @@ public:
     }
 };
 
+int main()
+{
+    Solution sol;
+
+    // Example 1: Input format is already flattened
+    vector<vector<int>> schedule = {
+        {1, 3}, {6, 7}, {2, 4}, {2, 5}, {9, 12}};
+
+    vector<vector<int>> freeTime = sol.employeeFreeTime(schedule);
+
+    cout << "Common free time intervals:\n";
+    for (auto &interval : freeTime)
+    {
+        cout << "[" << interval[0] << ", " << interval[1] << ")"<<"\n";
+    }
+
+    return 0;
+}
 
 /**
  Explanation:
