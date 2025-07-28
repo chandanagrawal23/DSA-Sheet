@@ -9,34 +9,67 @@ public:
     {
         map<int, int> diff;
 
-        // Mark start and end+1 of bloom using map
+        // Step 1: Mark start and end+1 of each flower using difference array logic
         for (auto &f : flowers)
         {
-            diff[f[0]] += 1;
-            diff[f[1] + 1] -= 1;
+            diff[f[0]] += 1;       // flower starts blooming
+            diff[f[1] + 1] -= 1;   // flower ends blooming after f[1]
         }
 
-        // Traverse in order and compute prefix sum
-        vector<int> bloomTime;
-        vector<int> bloomCount;
+        // Step 2: Traverse the diff map (auto-sorted by time)
+        // and build prefix sum to count how many flowers are blooming at each unique time
+        vector<int> bloomTime;   // stores time points where change occurs
+        vector<int> bloomCount;  // number of flowers blooming at corresponding time
 
         int current = 0;
         for (auto &[time, delta] : diff)
         {
-            current += delta;
+            current += delta;  // add/subtract flower count change
             bloomTime.push_back(time);
             bloomCount.push_back(current);
         }
 
-        // For each person, find the last bloomTime <= personArrivalTime using upper_bound
+        /*
+        Example:
+        flowers = [[1,5],[2,7],[4,6]]
+        diff = {1:+1, 2:+1, 4:+1, 6:-1, 7:-1, 8:-1}
+
+        After prefix sum:
+        bloomTime:   [1, 2, 4, 6, 7, 8]
+        bloomCount:  [1, 2, 3, 2, 1, 0]
+
+        Means:
+        - at time 1 → 1 flower
+        - at time 2 → 2 flowers
+        - at time 4 → 3 flowers  , iska matlb hai ki time 2 to time 3 tak 2 flowers , but at time 4 flower is 3
+        - at time 6 → 2 flowers  , iska matlb hai ki time 4 to time 5 tak 3 flowers , but at time 6 flower is 2
+        - at time 7 → 1 flower
+        - at time 8 → 0 flowers
+        */
+
+        // Step 3: For each person, find how many flowers were blooming at their arrival time
         vector<int> result;
         for (int pTime : peopleArrivalTime)
         {
+            /*
+            We want to find the latest bloomTime which is <= pTime
+            So we use upper_bound, which returns:
+            - index of first time strictly > pTime
+            - then we do (idx - 1) to get last time <= pTime
+            */
+
             int idx = upper_bound(bloomTime.begin(), bloomTime.end(), pTime) - bloomTime.begin();
+
             if (idx == 0)
-                result.push_back(0); // no flower yet
+            {
+                // All bloom times are after pTime → no flower was blooming yet
+                result.push_back(0);
+            }
             else
+            {
+                // bloomTime[idx - 1] is the last time ≤ pTime
                 result.push_back(bloomCount[idx - 1]);
+            }
         }
 
         return result;
@@ -46,79 +79,17 @@ public:
 /*
  Explanation:
 
-- diff[t] stores +1 at flower start and -1 at flower end + 1
-- Since time values are large (up to 1e9), we use map instead of array.
-- prefix sum over sorted keys gives active flower count at each unique time.
-- For each person:
-   - use upper_bound to find how many flowers were blooming <= their time
+- diff[t]: stores +1 when a flower starts at t, and -1 at t+1 when it ends
+- map is used instead of array because time can go up to 1e9
+- Prefix sum over sorted keys in map gives number of active flowers at each time
 
- Time: O(N log N + Q log N)
-   - N = flowers.size(), Q = people.size()
-   - log N for each query due to upper_bound
+ For each person:
+- We use upper_bound on bloomTime to find the first time > personArrival
+- Then bloomCount[idx - 1] gives count of flowers blooming at that time
 
- Space: O(N) for prefix arrays
-*/
+ Time Complexity: O(N log N + Q log N)
+   - N = number of flowers, Q = number of people
+   - log N per person due to binary search
 
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-/*
-If the constraints are not that much big, then we simply did
-
-Difference Array  + Prefix Sum liek Below-
-
-*/
-
-#include <bits/stdc++.h>
-using namespace std;
-
-class Solution
-{
-public:
-    vector<int> fullBloomFlowers(vector<vector<int>> &flowers, vector<int> &people)
-    {
-        const int MAX_TIME = 1e5 + 2;
-        vector<int> diff(MAX_TIME, 0);
-
-        // Mark difference array
-        for (auto &f : flowers)
-        {
-            diff[f[0]] += 1;
-            if (f[1] + 1 < MAX_TIME)
-                diff[f[1] + 1] -= 1;
-        }
-
-        // Compute prefix sum: bloomCount[t] = #flowers in bloom at time t
-        vector<int> bloomCount(MAX_TIME, 0);
-        bloomCount[0] = diff[0];
-        for (int i = 1; i < MAX_TIME; i++)
-        {
-            bloomCount[i] = bloomCount[i - 1] + diff[i];
-        }
-
-        // Answer each person's query in O(1)
-        vector<int> result;
-        for (int t : people)
-        {
-            result.push_back(bloomCount[t]);
-        }
-
-        return result;
-    }
-};
-
-/*
- Approach:
-
-1. Use a difference array `diff[]` to track when flowers bloom and fade.
-2. Compute prefix sum → gives how many flowers are blooming at each time.
-3. Query for each person in O(1).
-
- Time: O(N + MAX_TIME + Q)
- Space: O(MAX_TIME)
-  Where N = #flowers, Q = #people
-
- Only feasible when time bounds are small, like ≤ 1e5.
+ Space: O(N) for prefix arrays bloomTime and bloomCount
 */
