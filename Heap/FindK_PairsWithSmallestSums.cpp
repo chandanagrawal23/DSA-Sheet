@@ -16,7 +16,7 @@ class Solution
 public:
     vector<vector<int>> kSmallestPairs(vector<int> &nums1, vector<int> &nums2, int k)
     {
-        priority_queue<vector<int>, vector<vector<int>>, cmp> pq;
+        priority_queue<vector<int>, vector<vector<int>>, cmp> pq; // min heap <nums1,nums2, indexOfNums2>
 
         int n = nums1.size();
         int m = nums2.size();
