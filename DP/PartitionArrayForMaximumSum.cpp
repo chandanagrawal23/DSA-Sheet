@@ -1,45 +1,73 @@
 // In this solution we will use "FOR" loop
-class Solution {
-public:
-    // Recursive DP to find maximum sum after partitioning
-    int solve(vector<int> &a, int i, int n, int k, vector<int> &dp)
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution
+{
+    // Recursive function to find max sum of max elements in partitions from index 'start'
+    int recur(int start, int maxPartitionSize, int length, const vector<int> &tasks, vector<int> &dp)
     {
-        if (i >= n)
-            return 0;
+        if (start == length)
+            return 0; // All elements partitioned successfully
 
-        if (dp[i] != -1)
-            return dp[i];
+        if (dp[start] != -1)
+            return dp[start]; // Return dpd result
 
-        int maxVal = -1;
-        int currMax = -1;
+        int maxTaskComplexity = 0;
+        int maxSum = 0;
 
-        for (int j = i; j < min(i + k, n); j++)
+        // Expand current partition up to maxPartitionSize
+        for (int end = start; end < min(length, start + maxPartitionSize); ++end)
         {
-            currMax = max(currMax, a[j]);              // track max in current partition
-            int partSum = currMax * (j - i + 1);       // value of current partition
-            int remSum = solve(a, j + 1, n, k, dp);    // solve for remaining array
-            maxVal = max(maxVal, partSum + remSum);    // take maximum of all options
+            maxTaskComplexity = max(maxTaskComplexity, tasks[end]);  // Track max in current partition
+
+            // Recur for remaining tasks after this partition
+            int nextSum = recur(end + 1, maxPartitionSize, length, tasks, dp);
+
+            // Update maxSum with best partitioning result
+            maxSum = max(maxSum, maxTaskComplexity * (end - start + 1) + nextSum);
         }
 
-        return dp[i] = maxVal;
+        return dp[start] = maxSum; // Memoize and return
     }
 
-    int maxSumAfterPartitioning(vector<int> &a, int k)
+public:
+    int maxSumAfterPartitioning(const vector<int> &tasks, int maxPartitionSize)
     {
-        int n = a.size();
-        vector<int> dp(n, -1);
-        return solve(a, 0, n, k, dp);
+        int length = tasks.size();
+        vector<int> dp(length, -1);  // Memo table to store results for subproblems
+        return recur(0, maxPartitionSize, length, tasks, dp);
     }
 };
 
+int main()
+{
+    Solution solver;
+
+    vector<int> testCase1 = {1, 15, 7, 9, 2, 5, 10};
+    int k1 = 3;
+    cout << "Test Case 1 result: " << solver.maxSumAfterPartitioning(testCase1, k1) << "\n";
+
+    vector<int> testCase2 = {1, 2, 3, 4, 5};
+    int k2 = 2;
+    cout << "Test Case 2 result: " << solver.maxSumAfterPartitioning(testCase2, k2) << "\n";
+
+    return 0;
+}
+
 /*
 Approach:
-- At each index, try partitions of size 1 to k.
-- Track maximum in current partition and calculate total sum for that cut.
-- Recursively solve for the rest of the array and memoize.
+- Use recursion with memoization to partition array into contiguous subarrays of max length 'k'.
+- For each starting index, try all subarrays up to length 'k'.
+- Track the max element in the current subarray.
+- Recursively find max sum for the rest of the array.
+- Memoize results to avoid recomputation.
 
-Time Complexity: O(N * K), where N = array size, K = max partition size
-Space Complexity: O(N), for memoization array
+Time Complexity:
+- O(n * k), where n = number of elements and k = max partition size.
+
+Space Complexity:
+- O(n) for memoization array and recursion call stack.
 */
 
 
