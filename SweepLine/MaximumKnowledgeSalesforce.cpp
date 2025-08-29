@@ -4,35 +4,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// Event structure for meeting start/end
 struct Event {
     int day;
     int knowledge;
     bool isStart; // true = start of meeting, false = end of meeting
 };
 
-// Custom comparator for sorting events
+// Sort events by day, start events before end events
 bool compareEvents(const Event &a, const Event &b) {
     if (a.day == b.day)
         return a.isStart > b.isStart; // start events before end events
     return a.day < b.day;
 }
 
+// Compute max knowledge from k meetings per day
 int getMaxKnowledge(int d, int n, const vector<int> &s,
                     const vector<int> &e, const vector<int> &a, int k) {
-    // <day, knowledge, isStart>
-    vector<Event> events;
-    
+    if (k == 0 || n == 0) return 0; // Handle edge cases
 
+    vector<Event> events;
+    events.reserve(2 * n); // Pre-allocate for efficiency
     // Convert each meeting into two events: start and end+1
     for (int i = 0; i < n; i++) {
-        events.push_back({s[i], a[i], true});      // start of meeting
-        events.push_back({e[i] + 1, a[i], false}); // meeting ends after e[i]
+        events.push_back({s[i], a[i], true});      // Start of meeting
+        events.push_back({e[i] + 1, a[i], false}); // Meeting ends after e[i]
     }
 
     // Sort events by day (start events come before end events on same day)
     sort(events.begin(), events.end(), compareEvents);
 
-    multiset<int> active;  // active meetings’ knowledge values
+    multiset<int, greater<int>> active; // Active meetings’ knowledge values (descending)
     int maxKnowledge = 0;
 
     // Process events
@@ -44,21 +46,20 @@ int getMaxKnowledge(int d, int n, const vector<int> &s,
         while (i < (int)events.size() && events[i].day == currentDay) 
         {
             if (events[i].isStart)
-                active.insert(events[i].knowledge); // add meeting knowledge
+                active.insert(events[i].knowledge); // Add meeting knowledge
             else
-                active.erase(active.find(events[i].knowledge)); // remove ended meeting
+                active.erase(active.find(events[i].knowledge)); // Remove ended meeting
             i++;
         }
 
         // Pick top-k knowledge values from active in descending order
-        // tht is why see I use "rbegin" not "begin"
         int sum = 0, count = 0;
-        for (auto it = active.rbegin(); it != active.rend() && count < k; ++it, ++count) 
+        for (auto it = active.begin(); it != active.end() && count < k; ++it, ++count) 
         {
             sum += *it;
         }
 
-        maxKnowledge = max(maxKnowledge, sum);
+        maxKnowledge = max(maxKnowledge, sum); // Update max
     }
 
     return maxKnowledge;
@@ -116,51 +117,67 @@ bool compareEvents(const Event &a, const Event &b) {
 }
 
 // Insert knowledge into topK or rest, update sumTopK
-void handleInsert(int knowledge, multiset<int, greater<int>> &topK, multiset<int, greater<int>> &rest, long long &sumTopK, int k) {
-    if (topK.size() < k) { // Room in topK
+void handleInsert(int knowledge, multiset<int, greater<int>> &topK, multiset<int, greater<int>> &rest, long long &sumTopK, int k) 
+{
+    if (topK.size() < k) 
+    { // Room in topK
         topK.insert(knowledge);
         sumTopK += knowledge;
-    } else {
-        auto smallestTopK = topK.rbegin(); // Smallest in topK
-        if (knowledge > *smallestTopK) {
+    }
+    else
+    {
+        auto smallestTopK = topK.rbegin(); // Smallest in topK , note this is iterator
+        if (knowledge > *smallestTopK) 
+        {
             sumTopK -= *smallestTopK; // remove smallest
             sumTopK += knowledge ; // Add the new upcoming
             rest.insert(*smallestTopK); // Move smallest to rest
-            topK.erase(prev(topK.end()));
-            topK.insert(knowledge);
-        } else {
+            topK.erase(prev(topK.end())); // remove smallest from topK
+            topK.insert(knowledge); // insert new one in topK
+        }
+        else
+        {
             rest.insert(knowledge); // Add to rest
         }
     }
 }
 
 // Remove knowledge from topK or rest, update sumTopK
-void handleRemove(int knowledge, multiset<int, greater<int>> &topK, multiset<int, greater<int>> &rest, long long &sumTopK, int k) {
-    auto itTopK = topK.find(knowledge);
-    if (itTopK != topK.end()) { // Found in topK
+void handleRemove(int knowledge, multiset<int, greater<int>> &topK, multiset<int, greater<int>> &rest, long long &sumTopK, int k) 
+{
+    auto itTopK = topK.find(knowledge); // note this is iterator
+    if (itTopK != topK.end()) 
+    { // Found in topK
         sumTopK -= knowledge;
         topK.erase(itTopK);
-        if (!rest.empty()) { // Promote largest from rest
+        if (!rest.empty())
+        {   // Promote largest from rest
             auto largestRest = rest.begin();
             sumTopK += *largestRest;
             topK.insert(*largestRest);
             rest.erase(largestRest);
         }
-    } else { // Check rest
-        auto itRest = rest.find(knowledge);
-        if (itRest != rest.end()) {
-            rest.erase(itRest); // Remove from rest
+    } 
+    else
+    { // Check rest
+        auto itRest = rest.find(knowledge); // note iterator
+        if (itRest != rest.end())
+        {
+            rest.erase(itRest); // Remove from rest , it will remove only one occurence
         }
     }
 }
 
 // Compute max knowledge from k meetings per day
-int getMaxKnowledge(int d, int n, const vector<int> &s, const vector<int> &e, const vector<int> &a, int k) {
+int getMaxKnowledge(int d, int n, const vector<int> &s, const vector<int> &e, const vector<int> &a, int k) 
+{
     if (k == 0 || n == 0) return 0; // Handle edge cases
 
     vector<Event> events;
     events.reserve(2 * n); // Pre-allocate for efficiency
-    for (int i = 0; i < n; i++) {
+    
+    for (int i = 0; i < n; i++) 
+    {
         events.push_back({s[i], a[i], true}); // Start event
         events.push_back({e[i] + 1, a[i], false}); // End event
     }
