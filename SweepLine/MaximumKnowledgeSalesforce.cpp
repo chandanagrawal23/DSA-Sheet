@@ -123,7 +123,8 @@ void handleInsert(int knowledge, multiset<int, greater<int>> &topK, multiset<int
     } else {
         auto smallestTopK = topK.rbegin(); // Smallest in topK
         if (knowledge > *smallestTopK) {
-            sumTopK += knowledge - *smallestTopK; // Replace smallest
+            sumTopK -= *smallestTopK; // remove smallest
+            sumTopK += knowledge ; // Add the new upcoming
             rest.insert(*smallestTopK); // Move smallest to rest
             topK.erase(prev(topK.end()));
             topK.insert(knowledge);
