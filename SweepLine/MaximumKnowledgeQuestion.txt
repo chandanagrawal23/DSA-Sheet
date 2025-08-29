@@ -1,0 +1,54 @@
+/*
+
+Maximum Knowledge
+===================
+
+There is going to be a conference for d days.
+The schedule of n meetings is given as three arrays:
+
+s (start day)
+
+e (end day)
+
+a (additional knowledge gained)
+
+The ith meeting is available from s[i] to e[i] (both inclusive) and provides a knowledge gain of a[i].
+
+A limit of k meetings can be attended in one day.
+
+Find the maximum knowledge that can be gained in a single day.
+
+---------------------------------------------------------------------------------
+Example : 
+
+d = 10
+n = 4
+k = 2
+s = [2, 5, 4, 3]
+e = [8, 9, 7, 5]
+a = [800, 1600, 200, 400]
+
+Explanation (with k = 2)
+
+Day 1 → No meetings active → Knowledge gain = 0
+
+Day 2 → Only meeting 1 is active → Gain = 800
+
+Day 3 → Meetings 1 & 4 are active → Gain = 800 + 400 = 1200
+
+Day 5 → Meetings 1 & 2 are active → Gain = 800 + 1600 = 2400 ✅ maximum
+
+No other combination of 2 meetings gives more than 2400.
+
+Answer = 2400
+----------------------------------------------------------------------------------
+
+Day:   1 2 3 4 5 6 7 8 9 10
+       | | | | | | | | | |
+M1:      -------------         (a = 800,  s=2, e=8)
+M2:             --------       (a = 1600, s=5, e=9)
+M3:          -------           (a = 200,  s=4, e=7)
+M4:        -----               (a = 400,  s=3, e=5)
+
+https://www.reddit.com/r/leetcode/comments/1bt6dr3/maximum_knowledge_after_attending_k_conferences/
+*/
