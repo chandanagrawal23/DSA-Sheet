@@ -1,0 +1,95 @@
+/*
+
+Minimum Range Set from K Arrays
+===================================
+
+Problem Statement
+-----------------------
+
+You are given k arrays, each containing integers.
+Your task is to select exactly one element from each array such that:
+  The difference between the maximum and minimum elements in the selected set is minimized.
+If multiple sets yield the same minimum difference, you may return any one of them.
+
+Return the set of selected elements and the minimum difference.
+
+Input Format
+--------------
+First line: An integer k (number of arrays).
+Next k lines: Each line contains space-separated integers representing an array.
+
+Output Format
+-------------
+Print the selected set of elements (one element from each array) and Print the minimum difference (max(selected) - min(selected)).
+
+Constraints
+---------------
+
+2 <= k <= 10^3
+1 <= length of each array <= 10^3
+-10^6 <= array[i] <= 10^6
+Total number of elements across all arrays ≤ 10^5
+
+Example 1
+##########
+Input
+------
+3
+7 3 9
+5 11 6
+8 2 10
+
+Output
+-------
+7 6 8
+2
+
+Explanation
+--------------
+
+Possible set [7, 6, 8] has max = 8, min = 6 → difference = 2.
+Another valid set [9, 11, 10] also gives difference = 2.
+Minimum possible difference = 2.
+
+Example 2
+##########
+Input
+--------
+4
+30 1 20
+25 15
+28 35 17
+40 5 27
+
+Output
+---------
+30 25 28 27
+5
+
+Explanation
+--------------
+Set [30, 25, 28, 27] has max = 30, min = 25 → difference = 5.
+Another possible set [30, 25, 35, 40] gives difference = 15, which is worse.
+Hence the optimal set is [30, 25, 28, 27].
+
+Example 3
+##########
+
+Input
+------
+2
+1 5 9
+3 8 12
+
+Output
+------
+5 3
+2
+  
+Explanation
+-----------
+
+Selecting 5 from first array and 3 from second → max = 5, min = 3 → difference = 2.
+This is the smallest possible difference.
+
+*/
