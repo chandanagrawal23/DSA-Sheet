@@ -122,7 +122,7 @@ public:
     {
         parent.resize(n);
         size.assign(n, 1);
-        iota(parent.begin(), parent.end(), 0);
+        iota(parent.begin(), parent.end(), 0); // parent[i] = i
         components = n;
     }
 
@@ -152,7 +152,7 @@ class Solution
 public:
     int minTime(int n, vector<vector<int>>& edges, int k) 
     {
-        // Sort edges by removal time in DESCENDING order
+        // sort edges by removal time in descending order
         sort(edges.begin(), edges.end(), [](auto &a, auto &b) 
         {
             return a[2] > b[2];
@@ -160,18 +160,16 @@ public:
 
         DSU dsu(n);
 
-        // Start with all edges active, then "remove" them one by one
         for (auto &e : edges) 
         {
-            // Keep merging while edge exists (time > current removal threshold)
             dsu.union_set(e[0], e[1]);
-
-            // If removing edges up to current time gives ≥ k components
-            if (dsu.components >= k) 
+            
+            // once components < k, current edge time is answer
+            if (dsu.components < k) 
                 return e[2];
         }
 
-        // Already ≥ k components initially
+        // already ≥ k components initially
         return 0;
     }
 };
@@ -183,21 +181,26 @@ APPROACH:
 We need the minimum time `t` such that after removing all edges with time <= t,
 the graph has at least `k` connected components.
 
-1. Sort edges in DESCENDING order by time.
-   - This way, we start from the state where all edges exist
-     and gradually "remove" edges as time decreases.
+1. Sort edges in descending order of time.
+   - This simulates the graph in reverse:
+     at the beginning all edges are present,
+     and as time decreases, edges "vanish".
 
-2. Initialize DSU with n isolated nodes (n components).
+2. Initialize DSU with n isolated nodes.
+   - Initially, there are n components.
+
 3. Traverse edges in descending order:
-   - Union nodes connected by each edge (since those edges survive for now).
-   - Once DSU shows `components >= k`, the current edge’s time
-     is the minimum `t`.
+   - Keep merging endpoints of each edge (since edge still exists).
+   - Each union reduces component count.
+   - As soon as components < k,
+     the current edge’s time is the minimum `t`.
 
-4. Special case: If initial components ≥ k, answer is 0.
+4. Special case:
+   - If the graph already has ≥ k components at start, return 0.
 
 TIME COMPLEXITY:
 - Sorting edges: O(m log m), where m = number of edges.
-- DSU operations: O(m * α(n)), almost linear.
+- DSU operations: O(m * α(n)), α ≈ constant.
 - Total: O(m log m).
 
 SPACE COMPLEXITY:
@@ -205,3 +208,4 @@ SPACE COMPLEXITY:
 - Edge list → O(m).
 
 */
+
