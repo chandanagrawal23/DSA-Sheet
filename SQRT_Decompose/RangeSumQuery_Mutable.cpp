@@ -1,5 +1,5 @@
 // ------------------ Approach 1 : Brute Force ------------------
-class NumArray1 
+class NumArray 
 {
 public:
     vector<int> arr;
@@ -40,7 +40,7 @@ Space Complexity : O(n)
 
 
 // ------------------ Approach 2 : SQRT Decomposition ------------------
-class NumArray2 
+class NumArray
 {
 public:
     struct Bucket 
@@ -58,9 +58,12 @@ public:
         int size = nums.size();
         bucketNum = (int)sqrt(2 * size);  // approx bucket count
         bucketSize = bucketNum / 2;       // approx bucket size
-        while(bucketSize * bucketNum < size) ++bucketSize;  // adjust size
+        
+        while(bucketSize * bucketNum < size) 
+            ++bucketSize;  // adjust size
         
         Bs.resize(bucketNum);
+        
         for(int i = 0, k = 0; i < bucketNum; ++i) 
         {
             int temp = 0;
