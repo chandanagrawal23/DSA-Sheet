@@ -1,4 +1,4 @@
-// https://leetcode.com/problems/top-k-frequent-elements/
+// Learn all approaches (3rd approach they expect)
 
 // ----------------- Approach 1 : Min Heap -----------------
 class Solution
@@ -97,9 +97,9 @@ public:
             buckets[it.second].push_back(it.first);
 
         vector<int> res;
-        for (int i = n; i >= 1 && res.size() < k; i--)
+        for (int freq = n; freq >= 1 && res.size() < k; freq--)
         {
-            for (int num : buckets[i])
+            for (int num : buckets[freq])
             {
                 res.push_back(num);
                 if (res.size() == k) 
