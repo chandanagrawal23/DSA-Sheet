@@ -4,51 +4,51 @@ public:
     int maximumScore(vector<int>& scores, vector<vector<int>>& edges)
     {
         int n = scores.size();
-
-        // adjacency list storing top 3 neighbors (by score) for each node
+        vector<vector<int>> graph(n);
         vector<vector<int>> bestNeighbors(n);
 
-        // build adjacency
-        vector<vector<int>> graph(n);
+        // build adjacency list
         for (auto& e : edges)
         {
-            int u = e[0], v = e[1];
+            int u = e[0];
+            int v = e[1];
             graph[u].push_back(v);
             graph[v].push_back(u);
         }
 
-        // keep only top 3 neighbors for each node
+        // for each node, store (score, neighbor) pairs and sort
         for (int i = 0; i < n; i++)
         {
-            // sort neighbors by score (descending)
-            sort(graph[i].begin(), graph[i].end(), [&](int a, int b)
-            {
-                return scores[a] > scores[b];
-            });
+            vector<pair<int, int>> temp;
+            for (int nei : graph[i])
+                temp.push_back({scores[nei], nei});
 
-            // keep at most 3 best neighbors
-            for (int j = 0; j < min(3, (int)graph[i].size()); j++)
-                bestNeighbors[i].push_back(graph[i][j]);
+            // sort descending by score
+            sort(temp.begin(), temp.end(), greater<pair<int, int>>());
+
+            // keep only top 3 neighbors
+            for (int j = 0; j < min(3, (int)temp.size()); j++)
+                bestNeighbors[i].push_back(temp[j].second);
         }
 
         long long maxScore = -1;
 
-        // iterate over all edges and try to form sequence of length 4
+        // try every edge (u, v) as middle pair
         for (auto& e : edges)
         {
-            int u = e[0], v = e[1];
+            int u = e[0];
+            int v = e[1];
 
-            // pick neighbor x of u and y of v
             for (int x : bestNeighbors[u])
             {
-                if (x == v) continue; // avoid reusing node
+                if (x == v) continue;
 
                 for (int y : bestNeighbors[v])
                 {
                     if (y == u || y == x) continue;
 
-                    long long score = (long long)scores[u] + scores[v] + scores[x] + scores[y];
-                    maxScore = max(maxScore, score);
+                    long long total = (long long)scores[u] + scores[v] + scores[x] + scores[y];
+                    maxScore = max(maxScore, total);
                 }
             }
         }
@@ -57,21 +57,30 @@ public:
     }
 };
 
-/* APPROACH:
-   We need a sequence of 4 nodes connected like x - u - v - y.
-   So for every edge (u, v), treat it as the middle of the sequence.
-   Then choose:
-       x = one of the top 3 highest-score neighbors of u (not v),
-       y = one of the top 3 highest-score neighbors of v (not u, not x).
-   Calculate score = scores[x] + scores[u] + scores[v] + scores[y].
-   Keep track of the maximum score.
+/*
+APPROACH:
+----------
+We need a sequence of 4 connected nodes:  x - u - v - y
 
-   Why only top 3 neighbors?
-   - Because we just need the maximum score sequence.
-   - Checking all neighbors would be too slow, but only the top 3
-     are enough to guarantee the maximum.
+1. For each edge (u, v):
+   Treat it as the center connection.
+   Choose:
+       x → one of the top 3 neighbors of u (not v)
+       y → one of the top 3 neighbors of v (not u or x)
 
-   Time Complexity: O(m log m) for sorting neighbors (m = number of edges).
-   Then O(m) to check edges.
-   Space Complexity: O(n + m).
+2. To find top neighbors efficiently:
+   - Build adjacency list for all nodes.
+   - For each node, create pairs {score, neighbor}.
+   - Sort these pairs in descending order and keep top 3 neighbors.
+
+3. For every edge, compute:
+       score = scores[x] + scores[u] + scores[v] + scores[y]
+   Track the maximum among all.
+
+Why only top 3 neighbors?
+- Only a few high-score neighbors can form the optimal combination.
+- Reduces time complexity drastically while ensuring correctness.
+
+Time Complexity:  O(m log m)
+Space Complexity: O(n + m)
 */
