@@ -35,11 +35,11 @@ public:
         {
             if(ele.isInteger())
             {
-                countSum+=currentDepth*ele.getInteger();
+                countSum += currentDepth * ele.getInteger();
             }
             else 
             {
-                countSum+=calculateSum(ele.getList(), currentDepth+1);
+                countSum += calculateSum(ele.getList(), currentDepth+1);
             }
         }
         return countSum;
