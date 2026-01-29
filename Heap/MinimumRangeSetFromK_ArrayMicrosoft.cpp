@@ -191,8 +191,6 @@ int main()
     return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 /*
 -------------------------------
@@ -272,3 +270,114 @@ BestSet = [7,6,8]
 Time Complexity: O( k*(nLogn) + (k*n)logk )  (n = max element in any array, k=number of arrays)
 Space Complexity: O(k) [ at any time we have only k element in heap ]
 */
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <bits/stdc++.h>
+using namespace std;
+
+void solve(vector<vector<int>> &arrays)
+{
+    int k = arrays.size();
+
+    vector<pair<int, int>> nums;
+    for (int i = 0; i < k; i++)
+    {
+        for (int val : arrays[i])
+        {
+            nums.push_back({val, i});
+        }
+    }
+
+    sort(nums.begin(), nums.end());
+
+    vector<int> freq(k, 0);
+    int covered = 0;
+
+    int l = 0;
+    int minDiff = INT_MAX;
+    int bestL = 0, bestR = 0;
+
+    for (int r = 0; r < nums.size(); r++)
+    {
+        if (freq[nums[r].second] == 0)
+            covered++;
+
+        freq[nums[r].second]++;
+
+        while (covered == k)
+        {
+            int diff = nums[r].first - nums[l].first;
+            if (diff < minDiff)
+            {
+                minDiff = diff;
+                bestL = l;
+                bestR = r;
+            }
+
+            freq[nums[l].second]--;
+            if (freq[nums[l].second] == 0)
+                covered--;
+
+            l++;
+        }
+    }
+
+    vector<int> result(k, INT_MIN);
+    for (int i = bestL; i <= bestR; i++)
+    {
+        result[nums[i].second] = nums[i].first;
+    }
+
+    for (int x : result)
+        cout << x << " ";
+    cout << "\n" << minDiff << "\n\n";
+}
+
+int main()
+{
+    // -------- Test Case 1 --------
+    vector<vector<int>> tc1 = {
+        {7, 3, 9},
+        {5, 11, 6},
+        {8, 2, 10}
+    };
+
+    // -------- Test Case 2 --------
+    vector<vector<int>> tc2 = {
+        {30, 1, 20},
+        {25, 15},
+        {28, 35, 17},
+        {40, 5, 27}
+    };
+
+    // -------- Test Case 3 --------
+    vector<vector<int>> tc3 = {
+        {1, 5, 9},
+        {3, 8, 12}
+    };
+
+    cout << "Test Case 1:\n";
+    solve(tc1);
+
+    cout << "Test Case 2:\n";
+    solve(tc2);
+
+    cout << "Test Case 3:\n";
+    solve(tc3);
+
+    return 0;
+}
+
+/*
+Approach:
+- Merge all elements with their array index
+- Sort by value
+- Use sliding window to cover all k arrays
+- Minimize (max - min) range
+
+Time Complexity: O(N log N)
+Space Complexity: O(N + k)
+*/
+
