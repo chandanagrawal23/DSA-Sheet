@@ -83,13 +83,13 @@ Input
 
 Output
 ------
-5 3
-2
+9 8
+1
   
 Explanation
 -----------
 
-Selecting 5 from first array and 3 from second → max = 5, min = 3 → difference = 2.
+Selecting 9 from first array and 8 from second → max = 9, min = 1 → difference = 1.
 This is the smallest possible difference.
 
 */
