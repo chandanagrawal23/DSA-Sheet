@@ -16,21 +16,29 @@ public:
     {
         int n = s.size();
 
-        pref1.resize(n + 1, 0);
-        pref2.resize(n + 1, 0);
+        pref1.resize(n, 0);
+        pref2.resize(n, 0);
 
-        power1.resize(n + 1, 1);
-        power2.resize(n + 1, 1);
+        power1.resize(n, 1);
+        power2.resize(n, 1);
 
         for(int i = 0; i < n; i++)
         {
             long long value = s[i] - 'a' + 1;
 
-            power1[i + 1] = power1[i] * BASE1 % MOD1;
-            power2[i + 1] = power2[i] * BASE2 % MOD2;
+            if(i > 0)
+            {
+                power1[i] = power1[i - 1] * BASE1 % MOD1;
+                power2[i] = power2[i - 1] * BASE2 % MOD2;
 
-            pref1[i + 1] = (pref1[i] * BASE1 + value) % MOD1;
-            pref2[i + 1] = (pref2[i] * BASE2 + value) % MOD2;
+                pref1[i] = (pref1[i - 1] * BASE1 + value) % MOD1;
+                pref2[i] = (pref2[i - 1] * BASE2 + value) % MOD2;
+            }
+            else
+            {
+                pref1[i] = value;
+                pref2[i] = value;
+            }
         }
     }
 
@@ -38,11 +46,14 @@ public:
     {
         int len = r - l + 1;
 
-        long long h1 =
-            (pref1[r + 1] - pref1[l] * power1[len] % MOD1 + MOD1) % MOD1;
+        long long h1 = pref1[r];
+        long long h2 = pref2[r];
 
-        long long h2 =
-            (pref2[r + 1] - pref2[l] * power2[len] % MOD2 + MOD2) % MOD2;
+        if(l > 0)
+        {
+            h1 = (h1 - pref1[l - 1] * power1[len] % MOD1 + MOD1) % MOD1;
+            h2 = (h2 - pref2[l - 1] * power2[len] % MOD2 + MOD2) % MOD2;
+        }
 
         return {h1, h2};
     }
