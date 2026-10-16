@@ -1,3 +1,5 @@
+// Line Sweep with MAP - NLogN , but read the other two approaches too
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -91,3 +93,130 @@ We are given employee schedules with working intervals [start, end), and our goa
 
 
 **/
+
+
+
+// Approach 2 : Sabko add kro, sort kro, merge kro , and jo bhi free time hai lelo
+
+class Solution {
+public:
+    vector<Interval> employeeFreeTime(vector<vector<Interval>> schedule) {
+
+        vector<Interval> all;
+
+        // Put everyone's working intervals together
+        for (auto &employee : schedule) 
+        {
+            for (auto &interval : employee) 
+            {
+                all.push_back(interval);
+            }
+        }
+
+        // Sort by start time
+        sort(all.begin(), all.end(),
+             [](const Interval& a, const Interval& b) {
+                 return a.start < b.start;
+             });
+
+        vector<Interval> ans;
+
+        // Merge intervals
+        int start = all[0].start;
+        int end = all[0].end;
+
+        for (int i = 1; i < all.size(); i++) 
+        {
+
+            // Overlapping
+            if (all[i].start <= end) 
+            {
+                end = max(end, all[i].end);
+            }
+            else 
+            {
+                // Gap found
+                ans.push_back(Interval(end, all[i].start));
+
+                start = all[i].start;
+                end = all[i].end;
+            }
+        }
+
+        return ans;
+    }
+};
+
+//O(NlogN) - N is total Number of interval
+
+
+
+--------------------------------------------------------------
+
+
+// Below is NlogK 
+
+//N = total number of intervals across all employees
+ //K = number of employees
+
+// As every list is itself sorted we can use merge K sorted List Appriach
+class Solution {
+public:
+    vector<Interval> employeeFreeTime(vector<vector<Interval>> schedule) 
+    {
+
+        // {start time, employee index, interval index}
+        using T = tuple<int, int, int>;
+
+        priority_queue<T, vector<T>, greater<T>> pq;
+
+        int K = schedule.size();
+
+        // Put first interval of every employee into heap
+        for (int i = 0; i < K; i++) 
+        {
+            pq.push({schedule[i][0].start, i, 0});
+        }
+
+        vector<Interval> ans;
+        int currentEnd = -1;
+
+        while (!pq.empty()) 
+        {
+
+            auto [start, employee, index] = pq.top();
+            pq.pop();
+
+            Interval cur = schedule[employee][index];
+
+            // First interval
+            if (currentEnd == -1) 
+            {
+                currentEnd = cur.end;
+            }
+
+            // Overlap -> merge
+            else if (cur.start <= currentEnd) 
+            {
+                currentEnd = max(currentEnd, cur.end);
+            }
+
+            // Gap -> common free time
+            else 
+            {
+                ans.push_back(Interval(currentEnd, cur.start));
+                currentEnd = cur.end;
+            }
+
+            // Push next interval of same employee
+            if (index + 1 < schedule[employee].size()) 
+            {
+                pq.push({schedule[employee][index + 1].start, employee, index + 1});
+            }
+        }
+
+        return ans;
+    }
+};
+
+// K logN , K is total jobs, and N is number of intervals
