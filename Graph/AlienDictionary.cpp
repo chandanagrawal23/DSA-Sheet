@@ -1,76 +1,91 @@
-class Solution
-{
+class Solution {
 public:
-    string alienOrder(vector<string>& words)
-    {
-        unordered_map<char, unordered_set<char>> graph; // adjacency list
-        unordered_map<char, int> indegree;              // incoming edge count
+    string alienOrder(vector<string>& words) {
 
-        // Step 1: Initialize all characters
-        for (const string& word : words)
+        vector<vector<int>> adj(26);
+        vector<int> indegree(26, 0);
+        vector<bool> present(26, false);
+
+        // Mark characters that actually exist
+        for (string& word : words) 
         {
-            for (char c : word)
+            for (char c : word) 
             {
-                graph[c];       // ensure node exists
-                indegree[c] = 0;
+                present[c - 'a'] = true;
             }
         }
 
-        // Step 2: Build graph by comparing adjacent words
-        for (int i = 0; i < words.size() - 1; i++)
+        // Build graph using adjacent words
+        for (int i = 0; i + 1 < words.size(); i++) 
         {
-            string& w1 = words[i];
-            string& w2 = words[i + 1];
-            int len = min(w1.size(), w2.size());
-            bool foundEdge = false;
 
-            for (int j = 0; j < len; j++)
-            {
-                if (w1[j] != w2[j])
-                {
-                    // Add edge w1[j] -> w2[j] if not already added
-                    if (graph[w1[j]].insert(w2[j]).second)
-                    {
-                        indegree[w2[j]]++;
-                    }
-                    foundEdge = true;
-                    break;
-                }
-            }
+            string& a = words[i];
+            string& b = words[i + 1];
 
-            // Edge case: invalid input like ["abc", "ab"]
-            if (!foundEdge && w1.size() > w2.size())
+            int len = min(a.size(), b.size());
+            int j = 0;
+
+            // Find first different character
+            while (j < len && a[j] == b[j])
+                j++;
+
+            // Invalid prefix case
+            if (j == len && a.size() > b.size())
                 return "";
-        }
 
-        // Step 3: Topological sort (Kahn's algorithm)
-        queue<char> q;
-        for (auto& [ch, deg] : indegree)
-        {
-            if (deg == 0)
-                q.push(ch);
-        }
-
-        string result;
-        while (!q.empty())
-        {
-            char curr = q.front(); q.pop();
-            result += curr;
-
-            for (char neighbor : graph[curr])
+            // First different characters give ordering aage ka need nhi
+            // kyuki jab ye char hi nhi mila to aage to ham nhi bol skte relative ordering
+            if (j < len) 
             {
-                if (--indegree[neighbor] == 0)
-                {
-                    q.push(neighbor);
-                }
+                int u = a[j] - 'a';
+                int v = b[j] - 'a';
+
+                adj[u].push_back(v);
+                indegree[v]++;
             }
         }
 
-        // If result doesn't contain all characters → cycle detected
-        return result.size() == indegree.size() ? result : "";
+        queue<int> q;
+
+        for (int i = 0; i < 26; i++) 
+        {
+            if (present[i] && indegree[i] == 0)
+                q.push(i);
+        }
+
+        string ans;
+
+        while (!q.empty()) 
+        {
+
+            int cur = q.front();
+            q.pop();
+
+            ans += char('a' + cur);
+
+            for (int next : adj[cur]) 
+            {
+
+                indegree[next]--;
+
+                if (indegree[next] == 0)
+                    q.push(next);
+            }
+        }
+
+
+        int totalChars = 0;
+
+        for (bool x : present)
+            totalChars += x;
+            
+        // Cycle detected
+        if (ans.size() != totalChars)
+            return "";
+
+        return ans;
     }
 };
-
 /*
 🧠 Detailed Approach:
 
