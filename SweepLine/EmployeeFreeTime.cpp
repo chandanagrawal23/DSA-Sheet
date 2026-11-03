@@ -179,7 +179,7 @@ public:
         }
 
         vector<Interval> ans;
-        int currentEnd = -1;
+        int lastEnd = -1;
 
         while (!pq.empty()) 
         {
@@ -187,25 +187,25 @@ public:
             auto [start, employee, index] = pq.top();
             pq.pop();
 
-            Interval cur = schedule[employee][index];
+            Interval current = schedule[employee][index];
 
             // First interval
-            if (currentEnd == -1) 
+            if (lastEnd == -1) 
             {
-                currentEnd = cur.end;
+                lastEnd = current.end;
             }
 
             // Overlap -> merge
-            else if (cur.start <= currentEnd) 
+            else if (current.start <= lastEnd) 
             {
-                currentEnd = max(currentEnd, cur.end);
+                lastEnd = max(lastEnd, current.end);
             }
 
             // Gap -> common free time
             else 
             {
-                ans.push_back(Interval(currentEnd, cur.start));
-                currentEnd = cur.end;
+                ans.push_back(Interval(lastEnd, current.start));
+                lastEnd = current.end;
             }
 
             // Push next interval of same employee
