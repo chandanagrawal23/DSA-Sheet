@@ -112,3 +112,43 @@ Time Complexity: O(n)
 Space Complexity: O(n)
 - For prefix sum and hash map
 */
+
+
+
+/*
+
+//sirf end point 
+
+
+class Solution
+{
+public:
+    pair<int, int> findGoodPair(vector<int>& nums, int k)
+    {
+        unordered_map<long long, int> mp;
+
+        for (int i = 0; i < nums.size(); i++)
+        {
+            long long x = nums[i];
+            long long kValue = k;
+
+            if (mp.find(x - kValue) != mp.end())
+            {
+                return {mp[x - kValue], i};
+            }
+
+            if (mp.find(x + kValue) != mp.end())
+            {
+                return {mp[x + kValue], i};
+            }
+
+            if (mp.find(x) == mp.end())
+            {
+                mp[x] = i;
+            }
+        }
+
+        return {-1, -1};
+    }
+};
+*/
