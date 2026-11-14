@@ -1,0 +1,96 @@
+# Shortest Removable Substring to Eliminate Duplicates
+=============================================================
+
+## Problem Statement
+
+You are given a string s consisting of lowercase English letters.
+
+Your task is to find the minimum length of a contiguous substring that can be removed from s such that all characters in the remaining string are distinct.
+
+After removing the substring, the prefix and suffix are concatenated to form the remaining string.
+
+Return the minimum number of characters that must be removed.
+
+Note:
+- You can remove a substring from any position in the string.
+- The removed substring must be contiguous.
+- You may remove the entire string.
+- You may also remove an empty substring (length 0) if all characters are already distinct.
+- Characters in the remaining prefix and suffix must be unique across both parts.
+
+## Example 1
+
+Input: s = "abccba"
+
+Output: 3
+
+Explanation:
+
+Remove the first three characters "abc".
+
+- Original string: "abccba"
+- Removed substring: "abc"
+- Remaining string: "cba"
+
+All characters in "cba" are distinct.
+
+Therefore, the minimum deletion length is 3.
+
+
+  
+## Example 2
+
+Input: s = "abca"
+
+Output: 1
+
+Explanation:
+
+Remove the first character 'a'.
+
+- Original string: "abca"
+- Remaining string: "bca"
+
+All remaining characters are distinct.
+
+Therefore, the answer is 1.
+
+## Example 3
+
+Input: s = "aaaa"
+
+Output: 3
+
+Explanation:
+
+At most one 'a' can remain. Therefore, we must remove three consecutive characters.
+
+The answer is 3.
+
+## Example 4
+
+Input: s = "abcde"
+
+Output: 0
+
+Explanation:
+
+All characters are already distinct, so no deletion is required.
+
+
+## Constraints
+
+For practice, assume:
+
+- 1 <= s.length() <= 10^5
+- s contains only lowercase English letters.
+
+## Expected Approaches
+
+| Approach | Time | Space |
+|---|---|---|
+| Brute Force | O(N³) | O(1) |
+| Binary Search + Sliding Window | O(N log N) | O(1) |
+| Optimal Two Pointers | O(N) | O(1) |
+
+Follow-up: Can you solve the problem in O(N) time using two pointers and constant auxiliary space?
